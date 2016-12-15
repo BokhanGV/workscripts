@@ -12,7 +12,8 @@ fi
 ##### LOGIC
 
 # get list of files that face Permission Denied error and put the list into result file
-cat $target_file | grep "Can't open file:" | grep -Eo "[/][a-zA-Z0-9.,\ _-'\"\!@#$%^&*()\-]{,}" | uniq > $workdir/$result_file
+grep "Can't open file:" $target_file | grep -Eo "[/][a-zA-Z0-9.,\ _-'\"\!@#$%^&*()\-+]{,}" | uniq > $workdir/$result_file
 
 # open the path in a default file browser
 xdg-open $workdir
+#xdg-open $workdir/$result_file		# for debugging
