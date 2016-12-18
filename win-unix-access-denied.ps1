@@ -10,19 +10,7 @@ If (!(Test-Path $workdir)){mkdir $workdir}                                      
 ##### LOGIC
 
 # get list of files that face Permission Denied error and put the list into result file
-select-string -path $target        "Can't open file:([/]\s*\w*)*" | select matches > $workdir\tempfile.txt
-select-string -path $workdir\tempfile.txt "[/]\s*\w*([/]\s*\w*)*" | select matches > $workdir\$result 
-
-# clear the mess
-Remove-Item $workdir\tempfile.txt
+select-string -path $target "Can't open file:(.*)$" | ForEach-Object {$_.Matches.Groups[1].Value} > $workdir\$result 
 
 # open the path in a default file browser
 invoke-item $workdir\ #$result
-
-##### DEBUG
-
-#echo ""
-#echo "target:  $target"
-#echo "result:  $result"
-#echo "workdir: $workdir"
-#echo ""
