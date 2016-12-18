@@ -5,7 +5,7 @@ param (
 	[string]$result=([io.fileinfo]$MyInvocation.MyCommand.Name).basename+".txt",	# result file name is e.g. script-list.txt
     [string]$workdir="..\worktempdir"							# where to put the list
 )
-If (!(Test-Path $workdir)){mkdir $workdir}
+If (!(Test-Path $workdir)){mkdir $workdir}                                         	# if workdir does not exist create it
 
 ##### LOGIC
 
