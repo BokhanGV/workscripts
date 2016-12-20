@@ -9,8 +9,14 @@ If (!(Test-Path $workdir)){mkdir $workdir}                                      
 
 ##### LOGIC
 
+$rePermissionDenied="Can't open file:(.*)$"
+
 # get list of files that face Permission Denied error and put the list into result file
-select-string -path $target "Can't open file:(.*)$" | ForEach-Object {$_.Matches.Groups[1].Value} > $workdir\$result 
+echo "Permission denied:" > $workdir\$result
+select-string -path $target $rePermissionDenied | Sort-Object | Get-Unique | ForEach-Object {$_.Matches.Groups[1].Value} > $workdir\tempresult.txt 
+Get-Content $workdir\tempresult.txt | Sort-Object | Get-Unique >> $workdir\$result
+
+rm $workdir\tempresult.txt
 
 # open the path in a default file browser
 invoke-item $workdir\ #$result
