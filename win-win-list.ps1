@@ -11,8 +11,8 @@ If (!(Test-Path $workdir)){mkdir $workdir}                                      
 
 $reAccessDeniedSimple1="ERROR - Failed to get file permissions: (.*)$"
 $reAccessDeniedSimple2="WARN - Access to the folder is denied: (.*)$"
-$reAccessDeniedVSS1="^Access to the path (.*)$"
-$reAccessDeniedVSS2="^Could not find file (.*)$"
+$reAccessDeniedVSS1="^Access to the path '(.*)' is denied.$"	
+$reAccessDeniedVSS2="^Could not find file '(.*)'.$"	
 $rePathNotFound="ERROR - System.IO.DirectoryNotFoundException: Could not find a part of the path (.*)$"
 
 # get list of files that face Permission Denied error and put the list into result file
