@@ -3,27 +3,47 @@
 ##### PREREQUISITES
 
 target=$1					# argument 1 is the log file to extract the list from
-result=`basename $0 | cut -f1 -d'.'`"-list.txt"	# result file name is e.g. script-list.txt
+result=`basename $0 | cut -f1 -d'.'`".txt"	# result file name is e.g. script-list.txt
 workdir=~/worktempdir				# where to put the list
-if [ ! -d $tempdir ]; then
+if [ ! -d $workdir ]; then
 	mkdir $workdir				# if workdir does not exist create it
 fi
 
 ##### LOGIC
 
-tVSS="Access to the path"
-reVSS="[\\]GLOBALROOT[\\]Device[\\]HarddiskVolumeShadowCopy[0-9]{,}[\\][a-zA-Z0-9.,\ _-'\"\!@#$%^&*()\-+]{,}[\']"
-tSTC="Could not find file"
-reSTC="[\\]STC_SnapShot_Volume_[0-9]{,}_[0-9]{,}[\\][a-zA-Z0-9.,\ _-'\"\!@#$%^&*()\-+]{,}[\']"
-tSimple="ERROR - System.IO.DirectoryNotFoundException: Could not find a part of the path "
-reSimple="[A-Z]{1}[:][\\][a-zA-Z0-9.,\ _-'\"\!@#$%^&*()\-+]{,}[\']"
+textAccessDeniedSimple1="ERROR - Failed to get file permissions:"
+textAccessDeniedSimple2="WARN - Access to the folder is denied:"
+textAccessDeniedSimple3="^Access to the path"    
+textAccessDeniedVSS1="^Access to the path"    
+textAccessDeniedVSS2="^Could not find file" 
+textPathNotFound="ERROR - System.IO.DirectoryNotFoundException: Could not find a part of the path"
+
+reAccessDeniedSimple="[A-Z]{1}[:][\\](.*){,}[\']"
+reAccessDeniedVSS="[\\]GLOBALROOT[\\]Device[\\]HarddiskVolumeShadowCopy[0-9]{,}[\\](.*){,}[\']"    
+reStorageCraft="[\\]STC_SnapShot_Volume_[0-9]{,}_[0-9]{,}[\\](.*){,}[\']"
+rePathNotFound="[\'](.*){,}[\']"
 
 # get list of files that face Permission Denied error and put the list into result file
-grep "$tVSS" $target 	| grep -Eo "$reVSS" 	| uniq | awk '1' RS='.\n' >  $workdir/$result	# for VSS    paths
-grep "$tSTC" $target 	| grep -Eo "$reSTC" 	| uniq | awk '1' RS='.\n' >> $workdir/$result	# for STC VSS paths
-grep "$tSimple" $target	| grep -Eo "$reSimple"  | uniq | awk '1' RS='.\n' >> $workdir/$result	# for simple paths
+
+echo "Access denied:" > $workdir/$result
+#xdg-open $workdir/$result; read -p "Created and opened. Press enter to continue" #DBG
+
+grep "$textAccessDeniedSimple1" $target	| grep -Eo "$reAccessDeniedSimple" 	| sort | uniq | awk '1' RS='.\n' >> $workdir/$result	# for simple paths
+grep "$textAccessDeniedSimple2" $target	| grep -Eo "$reAccessDeniedSimple" 	| sort | uniq | awk '1' RS='.\n' >> $workdir/$result	# for simple paths
+grep "$textAccessDeniedSimple3" $target	| grep -Eo "$reAccessDeniedSimple" 	| sort | uniq | awk '1' RS='.\n' >> $workdir/$result	# for simple paths
+#xdg-open $workdir/$result; read -p "Simple done. Press enter to continue" #DBG
+
+grep "$textAccessDeniedVSS1" 	$target	| grep -Eo "$reAccessDeniedVSS"		| sort | uniq | awk '1' RS='.\n' >> $workdir/$result	# for VSS paths
+grep "$textAccessDeniedVSS2" 	$target	| grep -Eo "$reAccessDeniedVSS"		| sort | uniq | awk '1' RS='.\n' >> $workdir/$result	# for VSS paths
+grep "$textAccessDeniedVSS2" 	$target	| grep -Eo "$reStorageCraft"		| sort | uniq | awk '1' RS='.\n' >> $workdir/$result	# for VSS paths
+#xdg-open $workdir/$result; read -p "VSS done. Press enter to continue" #DBG
+
+echo "" >> $workdir/$result
+echo "Could not find a part of the path:" >> $workdir/$result
+grep "$textPathNotFound" 		$target	| grep -Eo "$rePathNotFound"  	| sort | uniq | cut -c2- | awk '1' RS='.\n' >> $workdir/$result	# for not found paths
+#xdg-open $workdir/$result; read -p "Not found done. Press enter to continue" #DBG
 
 ## TO DO
 
 # open the path in a default file browser
-xdg-open $workdir #/$result_file
+xdg-open $workdir #/$result
