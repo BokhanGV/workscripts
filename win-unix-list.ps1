@@ -12,13 +12,15 @@ If (!(Test-Path $workdir)){mkdir $workdir}                                      
 $rePermissionDenied="Can't open file:(.*)$"
 
 # get list of files that face Permission Denied error and put the list into result file
+
 echo "Permission denied:" > $workdir\$result
 select-string -path $target $rePermissionDenied   | ForEach-Object {$_.Matches.Groups[1].Value} > $workdir\tempresult.txt 
 Get-Content $workdir\tempresult.txt | Sort-Object | Get-Unique >> $workdir\$result
 
 ## TODO files not found
 
+# clean the mess up
 rm $workdir\tempresult.txt
 
 # open the path in a default file browser
-invoke-item $workdir\ #$result
+invoke-item $workdir #\$result
