@@ -11,7 +11,6 @@ if [ ! -d $workdir ];then mkdir $workdir;fi			# if workdir does not exist create
 
 textPermissionDenied="Can't open file:"
 rePermissionDenied="[/](.*){,}"
-
 reNotFound="[/](.*){,} does not exist$"
 
 # get list of files that face Permission Denied error and put the list into result file
