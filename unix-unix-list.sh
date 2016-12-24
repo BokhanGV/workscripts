@@ -15,8 +15,12 @@ rePermissionDenied="[/](.*){,}"
 # get list of files that face Permission Denied error and put the list into result file
 echo "Permission denied:" > $workdir/$result
 grep "$textPermissionDenied" $target | grep -Eo "$rePermissionDenied" | sort | uniq >> $workdir/$result
+#xdg-open $workdir/$result; read -p "Permission denied done. Press enter to continue" #DBG
 
-## TODO files not found
+echo "" >> $workdir/$result
+echo "Not found:" >> $workdir/$result
+grep -Eo "$reNotFound" $target 	| sort 	| uniq | sed 's/ does not exist$//' >> $workdir/$result
+#xdg-open $workdir/$result; read -p "Not found done. Press enter to continue" #DBG
 
 # open the path in a default file browser
 xdg-open $workdir #/$result
