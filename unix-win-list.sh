@@ -7,7 +7,6 @@ result=`basename $0 | cut -f1 -d'.'`".txt"	# result file name is e.g. script-lis
 workdir=./worktempdir				# where to put the list
 if [ ! -d $workdir ];then mkdir $workdir;fi	# if workdir does not exist create it
 
-
 ##### LOGIC
 
 textAccessDeniedSimple1="ERROR - Failed to get file permissions:"
